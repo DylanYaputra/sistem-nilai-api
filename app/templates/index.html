@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Sistem Nilai Mahasiswa</title>
+
+    <style>
+      body {
+        font-family: Arial;
+        background: #f4f6f9;
+        text-align: center;
+        padding: 50px;
+      }
+
+      .container {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        width: 400px;
+        margin: auto;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+
+      input {
+        width: 80%;
+        padding: 10px;
+        margin: 10px;
+        font-size: 16px;
+      }
+
+      button {
+        padding: 10px 20px;
+        font-size: 16px;
+        background: #007bff;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+      }
+
+      button:hover {
+        background: #0056b3;
+      }
+
+      #result {
+        margin-top: 20px;
+        font-size: 18px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>📊 Sistem Nilai Mahasiswa</h2>
+
+      <input type="number" id="tugas" placeholder="Nilai Tugas" />
+      <input type="number" id="uts" placeholder="Nilai UTS" />
+      <input type="number" id="uas" placeholder="Nilai UAS" />
+
+      <br />
+      <button onclick="hitung()">Hitung Nilai</button>
+
+      <div id="result"></div>
+    </div>
+
+    <script>
+      function hitung() {
+        const tugas = document.getElementById("tugas").value;
+        const uts = document.getElementById("uts").value;
+        const uas = document.getElementById("uas").value;
+
+        fetch("http://127.0.0.1:5000/hitung-nilai", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            tugas: Number(tugas),
+            uts: Number(uts),
+            uas: Number(uas),
+            kehadiran: 100,
+
+            bobot_tugas: 30,
+            bobot_uts: 30,
+            bobot_uas: 30,
+            bobot_kehadiran: 10,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            document.getElementById("result").innerHTML =
+              "Nilai Akhir: <b>" +
+              data.nilai_akhir +
+              "</b><br>" +
+              "Grade: <b>" +
+              data.grade +
+              "</b>";
+          })
+          .catch((error) => {
+            document.getElementById("result").innerHTML = "Terjadi error!";
+          });
+      }
+    </script>
+  </body>
+</html>
